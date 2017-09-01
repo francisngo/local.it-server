@@ -7,7 +7,6 @@ const PORT = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 // DELETE AFTER ROUTES REFACTOR //
 //define '/' route
 app.get('/', (req, res) => {
