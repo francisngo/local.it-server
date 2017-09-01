@@ -2,17 +2,13 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const PORT = 3000;
+const routes = require('./routes');
 
 //parse json
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// DELETE AFTER ROUTES REFACTOR //
-//define '/' route
-app.get('/', (req, res) => {
-  res.send('What\'s good?!');
-});
-// === //
+routes(app);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);

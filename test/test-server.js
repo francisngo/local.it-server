@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const request = require('request');
-//require mongoose and schema
+// require mongoose and schema
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -9,19 +9,19 @@ const testSchema = new Schema({
 });
 const Name = mongoose.model('Name', testSchema);
 
+// testing purposes only //
 describe('Basic Testing Setup', () => {
   describe('Node Server', () => {
 
-    it('should load "What\'s good?!"', () => {
+    it('should load "Hello, world"', () => {
       request('http://localhost:3000', (error, response, body) => {
-        expect(body).to.equal('What\'s good?!');
+        expect(body).to.equal('Hello, world');
       });
     });
 
   });
 });
-
-describe('Database Setup', () => {
+xdescribe('Database Setup', () => {
 
   // before starting test, create sandboxed database connection
   // once a connection is established invoke done()
