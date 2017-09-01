@@ -7,10 +7,13 @@ const PORT = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+// DELETE AFTER ROUTES REFACTOR //
 //define '/' route
 app.get('/', (req, res) => {
   res.send('What\'s good?!');
 });
+// === //
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
