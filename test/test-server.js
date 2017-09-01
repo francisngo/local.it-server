@@ -1,0 +1,79 @@
+const expect = require('chai').expect;
+const request = require('request');
+// require mongoose and schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const testSchema = new Schema({
+  name: { type: String, required: true }
+});
+const Name = mongoose.model('Name', testSchema);
+
+// testing purposes only //
+describe('Basic Testing Setup', () => {
+  describe('Node Server', () => {
+
+    it('should load "Hello, world"', () => {
+      request('http://localhost:3000', (error, response, body) => {
+        expect(body).to.equal('Hello, world');
+      });
+    });
+
+  });
+});
+xdescribe('Database Setup', () => {
+
+  // before starting test, create sandboxed database connection
+  // once a connection is established invoke done()
+  before((done) => {
+    mongoose.connect('mongodb://localhost/local-it-testdb', {
+      useMongoClient: true
+    });
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error'));
+    db.once('open', () => {
+      console.log('Database connected sucessfully.');
+      done();
+    });
+  });
+
+  describe('Database connection', () => {
+    // save object with 'name' value of 'Francis' to db
+    it('should save name to database', (done) => {
+      var testName = Name({
+        name: 'Francis'
+      });
+
+      testName.save(done);
+    });
+
+    // dont save object with incorrect format to db
+    it('should not save incorrect format to database', (done) => {
+      var wrongName = Name({
+        notName: 'not Francis'
+      });
+
+      wrongName.save((err) => {
+        if (err) { return done(); }
+        throw new Error('Should generate error');
+      });
+    });
+
+    // retrieve data from db
+    it('should retrieve data from test database', (done) => {
+      Name.find({name: 'Francis'}, (err, name) => {
+        if (err) { throw err; }
+        if (name.length === 0) { throw new Error('No data'); }
+        done();
+      });
+    });
+  });
+
+  //after db testing are finished drop database and close connection
+  after((done) => {
+    mongoose.connection.db.dropDatabase(() => {
+      mongoose.connection.close(done);
+    });
+  });
+
+});
