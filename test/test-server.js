@@ -44,20 +44,14 @@ describe('MongoDB Testing', () => {
           }
         ]
       });
-      testUser.save((err, result) => {
-        console.log('result after save', result);
-      });
-      User.find({ name: 'Francis' }, (err, result) => {
-        console.log('result after find', result);
-        }
-      );
+      testUser.save(done);
     });
 
     it('should retrieve user, Francis', (done) => {
       User.find({}, (err, result) => {
         if (err) { throw err; }
         if (result.length === 0) { throw new Error('No data'); }
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result));
         // console.log(JSON.stringify(result[0].user));
         expect(result[0].user).to.equal('Francis');
         done();
