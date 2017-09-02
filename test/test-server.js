@@ -44,7 +44,13 @@ describe('MongoDB Testing', () => {
           }
         ]
       });
-      testUser.save(done);
+      testUser.save((err, result) => {
+        console.log('result after save', result);
+      });
+      User.find({ name: 'Francis' }, (err, result) => {
+        console.log('result after find', result);
+        }
+      );
     });
 
     it('should retrieve user, Francis', (done) => {
