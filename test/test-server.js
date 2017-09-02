@@ -68,18 +68,15 @@ describe('MongoDB Testing', () => {
 })
 
 // testing purposes only //
-xdescribe('Basic Testing Setup', () => {
-  describe('Node Server', () => {
+describe('Basic Testing', () => {
 
+  describe('Basic node server setup', () => {
     it('should load "Hello, world"', () => {
       request('http://localhost:3000', (error, response, body) => {
         expect(body).to.equal('Hello, world');
       });
     });
-
   });
-});
-xdescribe('Database Setup', () => {
 
   // before starting test, create sandboxed database connection
   // once a connection is established invoke done()
@@ -90,12 +87,12 @@ xdescribe('Database Setup', () => {
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error'));
     db.once('open', () => {
-      console.log('Database connected sucessfully.');
+      // console.log('Database connected sucessfully.');
       done();
     });
   });
 
-  describe('Database connection', () => {
+  describe('Basic mongodb setup', () => {
     // save object with 'name' value of 'Francis' to db
     it('should save name to database', (done) => {
       var testName = Name({
@@ -133,5 +130,4 @@ xdescribe('Database Setup', () => {
       mongoose.connection.close(done);
     });
   });
-
 });
