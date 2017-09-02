@@ -9,7 +9,6 @@ module.exports = (app) => {
 
   // post new user to db
   app.post('/api/user', (req, res) => {
-    console.log(req.body)
     const name = req.body.user
     const newUser = new User({
       user: name
@@ -23,5 +22,16 @@ module.exports = (app) => {
       }
     });
   });
+
+  // post liked new interests
+  // app.post('/api/:user/:id', (req, res) => {
+    // req.body identify the user
+  // })
+
+  // post disliked new interest
+
+  // post new itinerary
+
+  //
 
 }
