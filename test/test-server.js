@@ -48,12 +48,13 @@ describe('MongoDB Testing', () => {
     });
 
     it('should retrieve user, Francis', (done) => {
-      User.find({}, (err, result) => {
+      let user = 'Francis';
+      User.findOne({user: user}, (err, result) => {
         if (err) { throw err; }
         if (result.length === 0) { throw new Error('No data'); }
-        // console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result.user));
         // console.log(JSON.stringify(result[0].user));
-        expect(result[0].user).to.equal('Francis');
+        expect(result.user).to.equal('Francis');
         done();
       });
     });
