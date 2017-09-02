@@ -44,22 +44,17 @@ describe('MongoDB Testing', () => {
           }
         ]
       });
-      testUser.save((err, result) => {
-        console.log('result after save', result);
-      });
-      User.find({ name: 'Francis' }, (err, result) => {
-        console.log('result after find', result);
-        }
-      );
+      testUser.save(done);
     });
 
     it('should retrieve user, Francis', (done) => {
-      User.find({}, (err, result) => {
+      let user = 'Francis';
+      User.findOne({user: user}, (err, result) => {
         if (err) { throw err; }
         if (result.length === 0) { throw new Error('No data'); }
-        console.log(JSON.stringify(result));
+        // console.log(JSON.stringify(result.user));
         // console.log(JSON.stringify(result[0].user));
-        expect(result[0].user).to.equal('Francis');
+        expect(result.user).to.equal('Francis');
         done();
       });
     });
@@ -73,18 +68,15 @@ describe('MongoDB Testing', () => {
 })
 
 // testing purposes only //
-xdescribe('Basic Testing Setup', () => {
-  describe('Node Server', () => {
+describe('Basic Testing', () => {
 
+  describe('Basic node server setup', () => {
     it('should load "Hello, world"', () => {
       request('http://localhost:3000', (error, response, body) => {
         expect(body).to.equal('Hello, world');
       });
     });
-
   });
-});
-xdescribe('Database Setup', () => {
 
   // before starting test, create sandboxed database connection
   // once a connection is established invoke done()
@@ -95,12 +87,12 @@ xdescribe('Database Setup', () => {
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error'));
     db.once('open', () => {
-      console.log('Database connected sucessfully.');
+      // console.log('Database connected sucessfully.');
       done();
     });
   });
 
-  describe('Database connection', () => {
+  describe('Basic mongodb setup', () => {
     // save object with 'name' value of 'Francis' to db
     it('should save name to database', (done) => {
       var testName = Name({
@@ -138,5 +130,4 @@ xdescribe('Database Setup', () => {
       mongoose.connection.close(done);
     });
   });
-
 });

@@ -1,15 +1,19 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
-const PORT = 3000;
-const routes = require('./routes');
+const morgan = require('morgan');
 
-//parse json
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
-routes(app);
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}`);
+const router = require('./router/');
+app.use(router);
+
+app.listen(PORT, (err) => {
+  if (err) { console.error(err); }
+  console.log(`Server listening on ${HOST}:${PORT}`);
 });
