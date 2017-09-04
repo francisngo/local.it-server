@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const passport = require('passport');
-const router = require('./router');
+// const passport = require('passport');
+const { router, passport } = require('./router');
 
 const app = express();
 app.use(bodyParser.json());

@@ -1,5 +1,5 @@
 const passport = require('passport');
-const FacebookStrategy = require('passport-facebook');
+const Strategy = require('passport-facebook').Strategy;
 const facebook = require('../auth/config');
 
 // transform Facebook profile
@@ -9,11 +9,14 @@ const transformFacebookProfile = (profile) => ({
 });
 
 // register Facebook Passport strategy
-passport.use(new FacebookStrategy(facebook,
+passport.use(new Strategy(facebook,
   function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ facebookId: profile.id }, function(err, user) {
-      return cb(err, user);
-    });
+    // TODO: save profile to db
+    // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+    //   return cb(err, user);
+    // });
+    console.log(profile);
+    cb(null, profile);
   }
 ));
 
@@ -35,7 +38,13 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 router.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   // successful authentication, redirect home.
-  (req, res) => res.redirect('local.it-client://login?user=' + JSON.stringify(req.user))
+  function(req, res) {
+    console.log('...redirecting...');
+    res.redirect('/');
+  }
 );
 
-module.exports = router;
+module.exports = {
+  router,
+  passport
+};
