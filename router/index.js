@@ -1,66 +1,50 @@
+const passport = require('passport');
+const Strategy = require('passport-facebook').Strategy;
+const facebook = require('../auth/config');
+
+// transform Facebook profile
+const transformFacebookProfile = (profile) => ({
+  name: profile.name,
+  avatar: profile.picture.data.url,
+});
+
+// register Facebook Passport strategy
+passport.use(new Strategy(facebook,
+  function(accessToken, refreshToken, profile, cb) {
+    // TODO: save profile to db
+    // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
+    //   return cb(err, user);
+    // });
+    // console.log(profile);
+    cb(null, profile);
+  }
+));
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
   res.send('Hello, world');
 });
 
-router.get('/about', (req, res) => {
-  res.send('This is the about page');
-});
+//TODO: Set up authentication, Set up protecting routes, Set up signing in.
 
-module.exports = router;
+// route for facebook authentication and login
+router.get('/auth/facebook', passport.authenticate('facebook'));
 
+// handle callback after facebook has authenticated the user
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  // successful authentication, redirect home.
+  function(req, res) {
+    console.log('...redirecting...');
+    res.redirect('/');
+  }
+);
 
-// const db = require('../db');
-// const User = require('../db/models/User');
-//
-// module.exports = (app) => {
-//
-//   app.get('/', (req, res) => {
-//     res.send('Hello, world');
-//   });
-//
-//   app.get('/api/user', (req, res) => {
-//
-//   });
-//
-//   // post new user to db
-//   app.post('/api/user', (req, res) => {
-//     const name = req.body.user
-//     const newUser = new User({
-//       user: name
-//     });
-//     newUser.save((err, user) => {
-//       if (err) {
-//         res.json(err);
-//       } else {
-//         console.log('pass')
-//         res.json(user);
-//       }
-//     });
-//   });
-//
-//   // post liked new interests
-//   // app.post('/api/:user/:id', (req, res) => {
-//     // req.body identify the user
-//   // })
-//
-//   // post disliked new interest
-//
-//   // post new itinerary
-//
-//   //
-// }
-
-/*
-GET: api/user
-POST: api/interests
-
-GET: api/interests/:id
-POST: api/interests/:id
-PUT: api/interests/:id
-
-
-Yelp:
-GET: /businesses/search
-*/
+module.exports = {
+  router,
+  passport
+};
