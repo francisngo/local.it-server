@@ -9,7 +9,8 @@
   "scripts": {
     "test": "mocha",
     "start": "node server.js",
-    "start:watch": "NODE_ENV=development nodemon server.js"
+    "start:watch": "NODE_ENV=development nodemon server.js",
+    "bogey": "do nothing"
   },
   "repository": {
     "type": "git",
