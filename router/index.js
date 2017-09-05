@@ -2,8 +2,6 @@ const passport = require('passport');
 const Strategy = require('passport-facebook').Strategy;
 const facebook = require('../auth/config');
 
-console.log(facebook);
-
 // transform Facebook profile
 const transformFacebookProfile = (profile) => ({
   name: profile.name,
