@@ -15,7 +15,7 @@ passport.use(new Strategy(facebook,
     // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
     //   return cb(err, user);
     // });
-    console.log(profile);
+    // console.log(profile);
     cb(null, profile);
   }
 ));
