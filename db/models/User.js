@@ -6,17 +6,17 @@ const userSchema = new Schema({
   interestsByCity: [
     {
       city: String,
-      interests: Object,
-      dislikedInterests: Object
+      interests: [],
+      dislikedInterests: []
     }
   ],
   itineraryByCity: [
     {
       name: String,
-      itineraryList: Object
+      itineraryList: []
     }
   ]
-});
+}, { retainKeyOrder: true });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
