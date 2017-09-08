@@ -8,6 +8,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+//initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '127.0.0.1';
 
