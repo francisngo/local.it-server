@@ -14,12 +14,12 @@ const transformFacebookProfile = (profile) => ({
 
 // register Facebook Passport strategy
 passport.use(new Strategy(facebook,
-  function(accessToken, refreshToken, profile, cb) {
+  (accessToken, refreshToken, profile, cb) => {
     // TODO: save profile to db
     // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
     //   return cb(err, user);
     // });
-    // console.log(profile);
+    console.log(profile);
     cb(null, profile);
   }
 ));
@@ -31,22 +31,17 @@ passport.deserializeUser((user, done) => done(null, user));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
-router.get('/', (req, res) => {
-  res.send('Hello, world');
-});
-
-//TODO: Set up authentication, Set up protecting routes, Set up signing in.
-
 // route for facebook authentication and login
 router.get('/auth/facebook', passport.authenticate('facebook'));
 
 // handle callback after facebook has authenticated the user
 router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  // successful authentication, redirect home.
-  function(req, res) {
+  passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }),
+  // redirect user back to mobile app using Linking with custom protocol: localit
+  (req, res) => {
     console.log('...redirecting...');
-    res.redirect('/');
+    console.log('user ', req.user);
+    res.redirect('localit://login?user=' + JSON.stringify(req.user));
   }
 );
 
@@ -97,4 +92,3 @@ module.exports = {
   router,
   passport
 };
-
