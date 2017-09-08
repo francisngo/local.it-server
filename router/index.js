@@ -35,6 +35,11 @@ router.get('/', (req, res) => {
   res.send('Hello, world');
 });
 
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+})
+
 //TODO: Set up authentication, Set up protecting routes, Set up signing in.
 
 // route for facebook authentication and login
