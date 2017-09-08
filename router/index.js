@@ -1,6 +1,10 @@
 const passport = require('passport');
 const Strategy = require('passport-facebook').Strategy;
 const facebook = require('../auth/config');
+const router = require('express').Router();
+const User = require('../db/models/User');
+const db = require('../db');
+const bodyParser = require('body-parser');
 
 // transform Facebook profile
 const transformFacebookProfile = (profile) => ({
@@ -23,10 +27,6 @@ passport.use(new Strategy(facebook,
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-const router = require('express').Router();
-const User = require('../db/models/User');
-const db = require('../db');
-const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
