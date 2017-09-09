@@ -1,26 +1,43 @@
 const passport = require('passport');
-const Strategy = require('passport-facebook').Strategy;
-const facebook = require('../auth/config');
+const facebookStrategy = require('passport-facebook').Strategy;
+const facebookConfig = require('../auth/config');
 const router = require('express').Router();
 const User = require('../db/models/User');
 const db = require('../db');
 const bodyParser = require('body-parser');
 
-// transform Facebook profile
-const transformFacebookProfile = (profile) => ({
-  name: profile.name,
-  avatar: profile.picture.data.url,
-});
-
 // register Facebook Passport strategy
-passport.use(new Strategy(facebook,
-  (accessToken, refreshToken, profile, cb) => {
-    // TODO: save profile to db
-    // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
-    //   return cb(err, user);
-    // });
-    console.log(profile);
-    cb(null, profile);
+passport.use(new facebookStrategy(facebookConfig,
+  (accessToken, refreshToken, profile, done) => {
+    process.nextTick(() => {
+      // find the user in the database based on their facebook name
+      User.findOne({ fbId: profile.id }, (err, user) => {
+        // if there is an error, stop everything and return an error connecting to db
+        if (err) {
+          console.log('user not found');
+          return done(err);
+        }
+        // if user is found, then log them in
+        if (user) {
+          console.log('user found');
+          return done(null, user);
+        }
+        //otherwise, create new user
+        else {
+          const newUser = new User();
+          newUser.fbID = profile.id;
+          newUser.user = profile.displayName;
+          newUser.token = accessToken;
+          newUser.photo = profile.photos[0].value;
+
+          newUser.save((err) => {
+            if (err) { throw err; }
+            console.log('user added');
+            return done(null, newUser);
+          });
+        }
+      });
+    });
   }
 ));
 
@@ -44,6 +61,12 @@ router.get('/auth/facebook/callback',
     res.redirect('localit://login?user=' + JSON.stringify(req.user));
   }
 );
+
+// handle logout
+router.get('/signout', (req, res) => {
+  req.logout();
+  res.redirect('localit://login?user=' + JSON.stringify(req.user))
+});
 
 router.get('/api/user'), (req, res) => {
   User.find((err, user) => {

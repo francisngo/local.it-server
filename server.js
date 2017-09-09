@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const expressSession = require('express-session');
 const { router, passport } = require('./router');
 
 const app = express();
@@ -9,6 +10,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 //initialize Passport
+app.use(expressSession({
+  secret: 'cerealandmilk'
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 

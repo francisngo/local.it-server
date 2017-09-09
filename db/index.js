@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+// dev db server
 const url = 'mongodb://localhost:27017/local-it';
+// production db server
+// const url = 'mongodb://54.67.111.142/local-it';
 
 mongoose.connect(url, {
   useMongoClient: true
