@@ -91,6 +91,7 @@ const seedUser = User({
   ],
   itineraryByCity: [
     {
+      city: 'Los Angeles',
       name: 'Labor Day Fiesta',
       itineraryList: [
         {
