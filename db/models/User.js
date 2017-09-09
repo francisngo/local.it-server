@@ -2,7 +2,10 @@ const mongoose = require ('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  fbID: String,
   user: String,
+  token: String,
+  photo: String,
   interestsByCity: [
     {
       city: String,

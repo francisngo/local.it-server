@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 // create db connection
 const db = require('./index');
 
@@ -11,7 +9,10 @@ User.collection.drop();
 
 // seed data
 const seedUser = User({
+  fbID: '0100205207988687',
   user: 'John Smith',
+  token: 'EAAMZAxlKQaYsBAJa1R7zvOoHZCf2mpz3qTWNhN1owMxhM1ViCEkcLJLKCHiB4eD0dJobOV3lrjqEzld1dVdAwfJHdZCizr1ELTCaTDfJZBYRhmzfIWF1cZBgZAKTIOXj7UtAEm41jjAgwD1AYPvnYFuqBi57MtN6EZD',
+  photo: 'https://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/16387256_10100135191637018_347784059648177463_n.jpg?oh=5e4947aa036e8676fed751f0e07cc83a&oe=5A5C5D21',
   interestsByCity: [
     {
       city: 'Los Angeles, CA',
