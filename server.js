@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const session = require('express-session');
->>>>>>> rebase
 const { router, passport } = require('./router');
 
 const app = express();
@@ -17,7 +16,6 @@ app.use(session({
   saveUninitialized: true
 }));
 // set Passport middleware
->>>>>>> rebase
 app.use(passport.initialize());
 app.use(passport.session());
 
