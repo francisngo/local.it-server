@@ -11,7 +11,7 @@ passport.use(new facebookStrategy(facebookConfig,
   (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
       // find the user in the database based on their facebook name
-      User.findOne({ fbId: profile.id }, (err, user) => {
+      User.findOne({ fbID: profile.id }, (err, user) => {
         // if there is an error, stop everything and return an error connecting to db
         if (err) {
           console.log('user not found');
@@ -42,8 +42,16 @@ passport.use(new facebookStrategy(facebookConfig,
 ));
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
+passport.deserializeUser((id, done) => {
+  console.log('============================================');
+  console.log('============================================');
+  console.log('ID:', id)
+  console.log('============================================');
+  console.log('============================================');
+  User.findById(id, (err, id) => {
+    done(err, id);
+  });
+});
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -68,8 +76,10 @@ router.get('/signout', (req, res) => {
   res.redirect('localit://login?user=' + JSON.stringify(req.user))
 });
 
+// apis
 router.get('/api/user'), (req, res) => {
   User.find((err, user) => {
+    console.log(user);
     if (err) return console.error(err);
     res.json(user);
   })
@@ -110,6 +120,27 @@ router.put('/api/:user', (req, res) => {
     })
   });
 });
+
+router.get('/api/profile', passport.authenticate('facebook'), (req, res) => {
+  //db query
+  console.log('============================================');
+  console.log('============================================');
+  console.log('req.user: ', req.user);
+  console.log('============================================');
+  console.log('============================================');
+
+  User.find({}, (err, user) => {
+    if (err) { throw err; }
+    res.json(user);
+  });
+});
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('localit://login?user=' + JSON.stringify(req.user))
+}
 
 module.exports = {
   router,
