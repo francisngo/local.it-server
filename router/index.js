@@ -5,6 +5,7 @@ const router = require('express').Router();
 const User = require('../db/models/User');
 const db = require('../db');
 const bodyParser = require('body-parser');
+const PythonShell = require('python-shell')
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -65,6 +66,22 @@ router.get('/auth/facebook/callback',
   }
 );
 
+router.post('/python', (req, res) => {
+  //console.log('in python. \n yelp: ', req.body.yelp, '\nuser: ', req.body.user);
+  fs.writeFile('Yelp.json', JSON.stringify(req.body.yelp), 'utf8', function() {
+    console.log('writing second json')
+    fs.writeFile('User.json', req.body.user, 'utf8', function() {
+      PythonShell.run('knnfilter.py', function (err, results) {
+        if (err) throw err;
+        // results is an array consisting of messages collected during execution
+        console.log('results: %j', results);
+        res.json(results)
+      })
+    }
+  )
+  })
+})
+
 router.get('/logout', (req, res, next) => {
   req.session.destroy((err) => {
     if (err) return next(err);
@@ -78,6 +95,7 @@ router.get('/api/user'), (req, res) => {
   User.find((err, user) => {
     console.log(user);
     if (err) return console.error(err);
+    console.log(user)
     res.json(user);
   })
 }
