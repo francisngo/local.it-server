@@ -6,12 +6,21 @@ const User = require('../db/models/User');
 const db = require('../db');
 const bodyParser = require('body-parser');
 
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
 // register Facebook Passport strategy
 passport.use(new facebookStrategy(facebookConfig,
   (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
       // find the user in the database based on their facebook name
-      User.findOne({ fbId: profile.id }, (err, user) => {
+      User.findOne({ fbID: profile.id }, (err, user) => {
+        // console.log('====================================');
+        // console.log(profile)
+        // console.log('====================================');
         // if there is an error, stop everything and return an error connecting to db
         if (err) {
           console.log('user not found');
@@ -25,9 +34,9 @@ passport.use(new facebookStrategy(facebookConfig,
         //otherwise, create new user
         else {
           const newUser = new User();
+
           newUser.fbID = profile.id;
           newUser.user = profile.displayName;
-          newUser.token = accessToken;
           newUser.photo = profile.photos[0].value;
 
           newUser.save((err) => {
@@ -41,35 +50,33 @@ passport.use(new facebookStrategy(facebookConfig,
   }
 ));
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
-
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-
 // route for facebook authentication and login
-router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get('/auth/facebook', passport.authenticate('facebook', { authType: 'rerequest' }));
 
 // handle callback after facebook has authenticated the user
 router.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }),
   // redirect user back to mobile app using Linking with custom protocol: localit
   (req, res) => {
-    console.log('...redirecting...');
-    console.log('user ', req.user);
+    // console.log('...redirecting...');
+    // console.log('user: ', req.user);
+    // res.send(req.user);
     res.redirect('localit://login?user=' + JSON.stringify(req.user));
   }
 );
 
-// handle logout
-router.get('/signout', (req, res) => {
-  req.logout();
-  res.redirect('localit://login?user=' + JSON.stringify(req.user))
-});
+router.get('/logout', (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) return next(err);
+    req.logout();
+    res.redirect('localit://login?user=' + JSON.stringify(req.user));
+  });
+})
 
+// apis
 router.get('/api/user'), (req, res) => {
   User.find((err, user) => {
+    console.log(user);
     if (err) return console.error(err);
     res.json(user);
   })
