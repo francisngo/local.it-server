@@ -110,25 +110,41 @@ router.put('/api/:user', (req, res) => {
   var city = req.body.city;
   var user = req.params.user;
   var business = req.body.business;
-  User.findOne({ _id: user }, (err, user) => {
+  User.findOne({ fbID: user }, (err, user) => {
     if (err) return console.error(err);
     if (req.body.liked === 'true') {
       // iterate through each city
-      user.interestsByCity.forEach((element) => {
-        // if city equals city
-        if (element.city === city) {
-          // then push business into it's interests
-          element.interests.push(business);
-        }
-      });
+      if (user.interestsByCity.length > 0) {
+        user.interestsByCity.forEach((element) => {
+          // if city equals city
+          if (element.city === city) {
+            // then push business into it's interests
+            element.interests.push(business);
+          }
+        });
+      } else {
+        user.interestsByCity.push({
+          city: city,
+          interests: business,
+          dislikedInterests: []
+        });
+      }
     } else {
-      user.interestsByCity.forEach((element) => {
-        // if city equals city
-        if (element.city === city) {
-          // then push business into it's interests
-          element.dislikedInterests.push(business);
-        }
-      });
+      if ( user.interestsByCity.length > 0) {
+        user.interestsByCity.forEach((element) => {
+          // if city equals city
+          if (element.city === city) {
+            // then push business into it's interests
+            element.dislikedInterests.push(business);
+          }
+        });
+      } else {
+        user.interestsByCity.push({
+          city: city,
+          interests: [],
+          dislikedInterests: business
+        });
+      }
     }
     user.save((err, thing) => {
       if (err) return console.log(err);
