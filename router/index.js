@@ -98,12 +98,23 @@ router.get('/api/user'), (req, res) => {
     console.log(user);
     if (err) return console.error(err);
     res.json(user);
-  })
-}
+  });
+};
+
 router.get('/api/users', (req, res) => {
   User.find((err, user) => {
     res.json(user);
-  })
+  });
+});
+
+// get a user's Saved Interests by City from DB
+router.get('/api/savedInterests/:user', (req, res) => {
+  var user = req.params.user;
+  User.find({ _id: user }, (err, user) => {
+    if (err) {return console.error(err)}
+    console.log('INTERESTS BY CITY: ', user.interestsByCity);
+    res.json(user);
+  });
 });
 
 router.put('/api/:user', (req, res) => {
@@ -148,8 +159,8 @@ router.put('/api/:user', (req, res) => {
     }
     user.save((err, thing) => {
       if (err) return console.log(err);
-      res.json(thing)
-    })
+      res.json(thing);
+    });
   });
 });
 
