@@ -9,10 +9,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-//initialize Passport
+// initialize Passport
 app.use(session({
-  secret: 'cerealandmilk'
+  secret: 'cerealandmilk',
+  resave: true,
+  saveUninitialized: true
 }));
+// set Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
