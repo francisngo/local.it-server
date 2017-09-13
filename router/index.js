@@ -125,7 +125,7 @@ router.put('/api/:user', (req, res) => {
         });
       }
     } else {
-      if ( user.interestsByCity.length > 0) {
+      if (user.interestsByCity.length > 0) {
         user.interestsByCity.forEach((element) => {
           // if city equals city
           if (element.city === city) {
