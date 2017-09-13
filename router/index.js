@@ -5,7 +5,9 @@ const router = require('express').Router();
 const User = require('../db/models/User');
 const db = require('../db');
 const bodyParser = require('body-parser');
-const PythonShell = require('python-shell')
+const PythonShell = require('python-shell');
+const fs = require('fs');
+const Promise = require('bluebird')
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -95,7 +97,6 @@ router.get('/api/user'), (req, res) => {
   User.find((err, user) => {
     console.log(user);
     if (err) return console.error(err);
-    console.log(user)
     res.json(user);
   })
 }

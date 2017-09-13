@@ -6,14 +6,17 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 import copy
+import sys
 
-with open('testyelp.json') as yelpjson:
+# yelp = sys.argv[1]
+# usdata = sys.argv[2]
+
+with open('Yelp.json') as yelpjson:
     yelp = json.load(yelpjson)
-with open('testdata.json') as userjson:
+with open('User.json') as userjson:
     usdata = json.load(userjson)
 
 def restructure(data, catlist, edit=False):
-    #print(len(data))
     for i in range(len(data)):
         newdata = []
         for j in range (len(data[i]['categories'])):
@@ -103,7 +106,7 @@ def makePrediciton(yelpData, user):
 
     X_train, X_test, y_train, y_test = train_test_split(df, target, random_state=0)
 
-    knn = KNeighborsClassifier(n_neighbors=3)
+    knn = KNeighborsClassifier(n_neighbors=1)
     knn.fit(X_train, y_train)
 
     #print(X_test)
@@ -116,10 +119,9 @@ def makePrediciton(yelpData, user):
     return prediction
 
 def returnPredicted(data, user):
-    origindata = copy.copy(data)
+    origindata = copy.deepcopy(data)
     filterData = []
     filtered = makePrediciton(data, user)
-    print(filtered)
     for i in range(len(filtered)):
       if filtered[i] == 1:
         filterData.append(origindata['businesses'][i])
