@@ -7,7 +7,7 @@ const db = require('../db');
 const bodyParser = require('body-parser');
 const PythonShell = require('python-shell');
 const fs = require('fs');
-const Promise = require('bluebird')
+const Promise = require('bluebird');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -77,12 +77,12 @@ router.post('/python', (req, res) => {
         if (err) throw err;
         // results is an array consisting of messages collected during execution
         console.log('results: %j', results);
-        res.json(results)
-      })
+        res.json(results);
+      });
     }
-  )
-  })
-})
+  );
+  });
+});
 
 router.get('/logout', (req, res, next) => {
   req.session.destroy((err) => {
@@ -90,20 +90,15 @@ router.get('/logout', (req, res, next) => {
     req.logout();
     res.redirect('localit://login?user=' + JSON.stringify(req.user));
   });
-})
+});
 
-// apis
-router.get('/api/user'), (req, res) => {
-  User.find((err, user) => {
-    console.log(user);
-    if (err) return console.error(err);
+// get a user's Saved Interests by City from DB
+router.get('/api/:user', (req, res) => {
+  var user = req.params.user;
+  User.findOne({ fbID: user }, (err, user) => {
+    if (err) {return console.error(err)}
     res.json(user);
-  })
-}
-router.get('/api/users', (req, res) => {
-  User.find((err, user) => {
-    res.json(user);
-  })
+  });
 });
 
 router.put('/api/:user', (req, res) => {
@@ -148,8 +143,8 @@ router.put('/api/:user', (req, res) => {
     }
     user.save((err, thing) => {
       if (err) return console.log(err);
-      res.json(thing)
-    })
+      res.json(thing);
+    });
   });
 });
 
