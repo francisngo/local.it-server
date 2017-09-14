@@ -110,6 +110,7 @@ router.put('/api/:user', (req, res) => {
     if (req.body.liked === 'true') {
       // iterate through each city
       if (user.interestsByCity.length > 0) {
+
         var cityExists = false;
         user.interestsByCity.forEach((element) => {
           // if city equals city
