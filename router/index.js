@@ -92,9 +92,10 @@ router.get('/logout', (req, res, next) => {
   });
 });
 
-// get a user's Saved Interests by City from DB
+// get a user from DB
 router.get('/api/:user', (req, res) => {
   var user = req.params.user;
+  console.log(user);
   User.findOne({ fbID: user }, (err, user) => {
     if (err) {return console.error(err)}
     res.json(user);
