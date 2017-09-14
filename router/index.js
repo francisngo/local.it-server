@@ -110,13 +110,23 @@ router.put('/api/:user', (req, res) => {
     if (req.body.liked === 'true') {
       // iterate through each city
       if (user.interestsByCity.length > 0) {
+        var cityExists = false;
         user.interestsByCity.forEach((element) => {
           // if city equals city
           if (element.city === city) {
+            cityExists = true;
             // then push business into it's interests
             element.interests.push(business);
           }
         });
+        console.log('this should be true', cityExists);
+        if (!cityExists) {
+          user.interestsByCity.push({
+            city: city,
+            interests: business,
+            dislikedInterests: []
+          });
+        }
       } else {
         user.interestsByCity.push({
           city: city,
@@ -126,13 +136,23 @@ router.put('/api/:user', (req, res) => {
       }
     } else {
       if (user.interestsByCity.length > 0) {
+        var cityExists = false;
         user.interestsByCity.forEach((element) => {
           // if city equals city
           if (element.city === city) {
+            cityExists = true;
             // then push business into it's interests
             element.dislikedInterests.push(business);
           }
         });
+        console.log('this should be true, ', cityExists)
+        if (!cityExists) {
+          user.interestsByCity.push({
+            city: city,
+            interests: [],
+            dislikedInterests: business
+          });
+        }
       } else {
         user.interestsByCity.push({
           city: city,
