@@ -121,7 +121,6 @@ router.put('/api/:user', (req, res) => {
             element.interests.push(business);
           }
         });
-        console.log('this should be true', cityExists);
         if (!cityExists) {
           user.interestsByCity.push({
             city: city,
