@@ -71,7 +71,7 @@ router.get('/auth/facebook/callback',
 router.post('/python', (req, res) => {
   //console.log('in python. \n yelp: ', req.body.yelp, '\nuser: ', req.body.user);
   fs.writeFile('Yelp.json', JSON.stringify(req.body.yelp), 'utf8', function() {
-    console.log('writing second json')
+    console.log('writing second json');
     fs.writeFile('User.json', req.body.user, 'utf8', function() {
       PythonShell.run('knnfilter.py', function (err, results) {
         if (err) throw err;
