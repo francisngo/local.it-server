@@ -35,7 +35,10 @@ def restructure(data, catlist, edit=False):
             if not catlist[j] in data[i]:
                 data[i][catlist[j]] = 0
     for i in range(len(data)):
-        data[i]['price'] = len(data[i]['price'])
+        if 'price' in data[i]:
+            data[i]['price'] = len(data[i]['price'])
+        else:
+            data[i]['price'] = 0
     for i in range(len(data)):
         data[i]['transaction: pickup'] = 0
         data[i]['transaction: delivery'] = 0

@@ -2,7 +2,7 @@ node_modules
 .env
 auth/config.js
 .DS_Store
-User.json
-Yelp.json
 testdata.json
 testyelp.json
+User.json
+Yelp.json
