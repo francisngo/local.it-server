@@ -132,4 +132,8 @@ def returnPredicted(data, user):
     print(filterData)
     return filterData
 
+<<<<<<< HEAD
 returnPredicted(yelp, usdata)
+=======
+returnPredicted(yelp, usdata)
+>>>>>>> Commit before rebase
