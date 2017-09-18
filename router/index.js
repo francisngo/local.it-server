@@ -93,6 +93,23 @@ router.get('/api/:user', (req, res) => {
   });
 });
 
+router.post('/api/itinerary/:user', (req, res) => {
+  const user = req.params.user;
+  const itineraryName = req.body.itineraryName;
+  const interests = req.body.interests;
+  User.findOne({ fbID: user }, (err, user) => {
+    if (err) return console.error(err);
+    user.itineraryByCity.push({
+      name: itineraryName,
+      itineraryList: interests
+    });
+    user.save((err, thing) => {
+      if (err) return console.log(err);
+      res.json(thing);
+    });
+  })
+})
+
 router.put('/api/:user', (req, res) => {
   let city = req.body.city;
   let user = req.params.user;
@@ -113,7 +130,6 @@ router.put('/api/:user', (req, res) => {
             element.interests.push(business);
           }
         });
-        console.log('this should be true', cityExists);
         if (!cityExists) {
           user.interestsByCity.push({city: city, interests: business, dislikedInterests: []});
         }
