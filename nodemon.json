@@ -1,0 +1,6 @@
+{
+  "ignore": [
+    "User.json",
+    "Yelp.json"
+  ]
+}
