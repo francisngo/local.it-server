@@ -1,5 +1,4 @@
 const passport = require('passport');
-const axios = require('axios');
 const facebookStrategy = require('passport-facebook').Strategy;
 const facebookConfig = require('../auth/config');
 const router = require('express').Router();
