@@ -62,9 +62,10 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
 router.post('/python', (req, res) => {
   //console.log('in python. \n yelp: ', req.body.yelp, '\nuser: ', req.body.user);
   fs.writeFile('Yelp.json', JSON.stringify(req.body.yelp), 'utf8', function() {
-    console.log('writing second json')
-    fs.writeFile('User.json', req.body.user, 'utf8', function() {
-      PythonShell.run('knnfilter.py', function(err, results) {
+    console.log('writing second json');
+    fs.writeFile('User.json', req.body.user, 'utf8', function() 
+      console.log('Running in /python');
+      PythonShell.run('knnfilter.py', function (err, results) {
         if (err) throw err;
 
         // results is an array consisting of messages collected during execution
@@ -75,12 +76,11 @@ router.post('/python', (req, res) => {
   });
 });
 
-router.get('/logout', (req, res, next) => {
-  req.session.destroy((err) => {
-    if (err) return next(err);
-    req.logout();
-    res.redirect('localit://login?user=' + JSON.stringify(req.user));
-  });
+// end user session upon logout
+router.get('/logout', (req, res) => {
+  req.logout();
+  delete req.session;
+  res.send('Bye Bye user!');
 });
 
 // get a user from DB
