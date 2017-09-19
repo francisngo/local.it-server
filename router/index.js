@@ -147,7 +147,7 @@ router.put('/api/interests/:user', (req, res) => {
     user.save((err, thing) => {
       if (err) return console.log(err);
       res.json(thing);
-    })
+    });
   });
 });
 
