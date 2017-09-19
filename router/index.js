@@ -1,12 +1,14 @@
 const passport = require('passport');
 const facebookStrategy = require('passport-facebook').Strategy;
 const facebookConfig = require('../auth/config');
+const yelpConfig = require('../auth/yelpConfig');
 const router = require('express').Router();
 const User = require('../db/models/User');
 const db = require('../db');
 const bodyParser = require('body-parser');
 const PythonShell = require('python-shell');
 const fs = require('fs');
+const YelpApi = require('yelp-api-v3');
 const Promise = require('bluebird');
 
 router.use(bodyParser.json());
@@ -57,23 +59,6 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
 // redirect user back to mobile app using Linking with custom protocol: localit
 (req, res) => {
   res.redirect('localit://login?user=' + JSON.stringify(req.user));
-});
-
-router.post('/python', (req, res) => {
-  //console.log('in python. \n yelp: ', req.body.yelp, '\nuser: ', req.body.user);
-  fs.writeFile('Yelp.json', JSON.stringify(req.body.yelp), 'utf8', function() {
-    console.log('writing second json');
-    fs.writeFile('User.json', req.body.user, 'utf8', function() 
-      console.log('Running in /python');
-      PythonShell.run('knnfilter.py', function (err, results) {
-        if (err) throw err;
-
-        // results is an array consisting of messages collected during execution
-        console.log('results: %j', results);
-        res.json(results);
-      });
-    });
-  });
 });
 
 // end user session upon logout
@@ -285,6 +270,56 @@ router.put('/api/interests/:user', (req, res) => {
     })
   });
 });
+
+//Handle Yelp data retreival and Python parsing
+
+router.post('/api/yelp', (req, res) => {
+  console.log('props: ', req.body);
+  var credentials = {
+    app_id: yelpConfig.appId,
+    app_secret: yelpConfig.appSecret
+  };
+  const yelp = new YelpApi(credentials);
+  let lat = req.body.latitude;
+  let lng = req.body.longitude;
+  let latlng = String(lat) + ',' + String(lng);
+  let title = req.body.title;
+  let userdata = null;
+  let userid = req.body.fbID;
+  let params = {
+    term: title,
+    location: latlng,
+    limit: '15',
+  };
+  console.log('params: ', params);
+  yelp.search(params)
+  .then((data) => {
+    User.findOne({ fbID: userid }, (err, usercheck) => {
+    if (err) {return console.error(err)}
+    if (usercheck.interestsByCity.length > 0) {
+        if (usercheck.interestsByCity[0].interests.length > 3 && usercheck.interestsByCity[0].dislikedInterests.length > 3) {
+            fs.writeFile('Yelp.json', data, 'utf8', function() {
+              console.log('writing second json')
+              fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
+                PythonShell.run('knnfilter.py', function (err, results) {
+                  if (err) throw err;
+                  // results is an array consisting of messages collected during execution
+                  res.json(results);
+                });
+              });
+            });
+        } else {
+          res.json(data.businesses);
+        }
+      } else {
+        res.json(data.businesses);
+      }
+  });
+  })
+  .catch((err) => console.log(err))
+})
+
+
 
 module.exports = {
   router,
