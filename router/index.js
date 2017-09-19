@@ -150,122 +150,19 @@ router.put('/api/:user', (req, res) => {
 
 //TODO: create API to save itinerary list
 router.put('/api/interests/:user', (req, res) => {
+  console.log('this is the bod', req.body);
   let user = req.params.user;
   let itineraryName = req.body.itineraryName;
-  let savedInterests = [
-    {
-      "id": "the-secret-alley-san-francisco",
-      "name": "The Secret Alley",
-      "image_url": "https://s3-media1.fl.yelpcdn.com/bphoto/pvoI5obHw_5Ck1w7EdANYg/o.jpg",
-      "is_closed": false,
-      "url": "https://www.yelp.com/biz/the-secret-alley-san-francisco?adjust_creative=f0bC-kYRtkbeuExDdacDNw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=f0bC-kYRtkbeuExDdacDNw",
-      "review_count": 12,
-      "categories": [
-        {
-          "alias": "galleries",
-          "title": "Art Galleries"
-        }
-      ],
-      "rating": 4.5,
-      "coordinates": {
-        "latitude": 37.7552719116211,
-        "longitude": -122.41877746582
-      },
-      "transactions": [],
-      "price": "$",
-      "location": {
-        "address1": "",
-        "address2": "",
-        "address3": "",
-        "city": "San Francisco",
-        "zip_code": "94110",
-        "country": "US",
-        "state": "CA",
-        "display_address": ["San Francisco, CA 94110"]
-      },
-      "phone": "+14155538944",
-      "display_phone": "(415) 553-8944",
-      "distance": 2095.273453772
-    }, {
-      "id": "magowans-infinite-mirror-maze-san-francisco",
-      "name": "Magowan's Infinite Mirror Maze",
-      "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/E8XZJCG7h4yCndNzqVdJJg/o.jpg",
-      "is_closed": false,
-      "url": "https://www.yelp.com/biz/magowans-infinite-mirror-maze-san-francisco?adjust_creative=f0bC-kYRtkbeuExDdacDNw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=f0bC-kYRtkbeuExDdacDNw",
-      "review_count": 296,
-      "categories": [
-        {
-          "alias": "arts",
-          "title": "Arts & Entertainment"
-        }
-      ],
-      "rating": 4.5,
-      "coordinates": {
-        "latitude": 37.810114,
-        "longitude": -122.410287
-      },
-      "transactions": [],
-      "location": {
-        "address1": "Pier 39",
-        "address2": "Bldg O-11",
-        "address3": "",
-        "city": "San Francisco",
-        "zip_code": "94133",
-        "country": "US",
-        "state": "CA",
-        "display_address": ["Pier 39", "Bldg O-11", "San Francisco, CA 94133"]
-      },
-      "phone": "+14158350019",
-      "display_phone": "(415) 835-0019",
-      "distance": 5935.9794571719995
-    }, {
-      "id": "exploratorium-san-francisco-2",
-      "name": "Exploratorium",
-      "image_url": "https://s3-media2.fl.yelpcdn.com/bphoto/Sse9XcaERbw5iBIxN-Q6Yw/o.jpg",
-      "is_closed": false,
-      "url": "https://www.yelp.com/biz/exploratorium-san-francisco-2?adjust_creative=f0bC-kYRtkbeuExDdacDNw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=f0bC-kYRtkbeuExDdacDNw",
-      "review_count": 800,
-      "categories": [
-        {
-          "alias": "venues",
-          "title": "Venues & Event Spaces"
-        }, {
-          "alias": "museums",
-          "title": "Museums"
-        }
-      ],
-      "rating": 4.5,
-      "coordinates": {
-        "latitude": 37.800875,
-        "longitude": -122.398619
-      },
-      "transactions": [],
-      "location": {
-        "address1": "Pier 15",
-        "address2": "",
-        "address3": "",
-        "city": "San Francisco",
-        "zip_code": "94111",
-        "country": "US",
-        "state": "CA",
-        "display_address": ["Pier 15", "San Francisco, CA 94111"]
-      },
-      "phone": "+14155284444",
-      "display_phone": "(415) 528-4444",
-      "distance": 5550.88966181
-    }
-  ];
+  let savedInterests = req.body.savedInterests;
   let savedItinerary = {
       name: itineraryName,
       itineraryList: savedInterests
   };
-  console.log('savedItinerary: ', user);
   User.findOne({ fbID: user }, (err, user) => {
     if (err) { return console.error(err) }
     user.itineraryByCity.push(savedItinerary);
     user.save((err, thing) => {
       if (err) return console.log(err);
-      console.log(thing);
       res.json(thing);
     })
   });
