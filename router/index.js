@@ -61,23 +61,6 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
   res.redirect('localit://login?user=' + JSON.stringify(req.user));
 });
 
-router.post('/python', (req, res) => {
-  //console.log('in python. \n yelp: ', req.body.yelp, '\nuser: ', req.body.user);
-  fs.writeFile('Yelp.json', JSON.stringify(req.body.yelp), 'utf8', function() {
-    console.log('writing second json');
-    fs.writeFile('User.json', req.body.user, 'utf8', function() 
-      console.log('Running in /python');
-      PythonShell.run('knnfilter.py', function (err, results) {
-        if (err) throw err;
-
-        // results is an array consisting of messages collected during execution
-        console.log('results: %j', results);
-        res.json(results);
-      });
-    });
-  });
-});
-
 // end user session upon logout
 router.get('/logout', (req, res) => {
   req.logout();
@@ -288,6 +271,8 @@ router.put('/api/interests/:user', (req, res) => {
   });
 });
 
+//Handle Yelp data retreival and Python parsing
+
 router.post('/api/yelp', (req, res) => {
   console.log('props: ', req.body);
   var credentials = {
@@ -309,20 +294,16 @@ router.post('/api/yelp', (req, res) => {
   console.log('params: ', params);
   yelp.search(params)
   .then((data) => {
-    console.log('yelp: results')
     User.findOne({ fbID: userid }, (err, usercheck) => {
     if (err) {return console.error(err)}
     if (usercheck.interestsByCity.length > 0) {
         if (usercheck.interestsByCity[0].interests.length > 3 && usercheck.interestsByCity[0].dislikedInterests.length > 3) {
-            console.log('yelpdata: ', data);
-            console.log('userdata: ', usercheck);
             fs.writeFile('Yelp.json', data, 'utf8', function() {
               console.log('writing second json')
               fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
                 PythonShell.run('knnfilter.py', function (err, results) {
                   if (err) throw err;
                   // results is an array consisting of messages collected during execution
-                  console.log('results: %j', results);
                   res.json(results);
                 });
               });
