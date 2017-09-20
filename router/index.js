@@ -153,6 +153,8 @@ router.put('/api/interests/:user', (req, res) => {
 
 //Handle Yelp data retreival and Python parsing
 
+
+
 router.post('/api/yelp', (req, res) => {
   console.log('props: ', req.body);
   var credentials = {
@@ -189,17 +191,19 @@ router.post('/api/yelp', (req, res) => {
               });
             });
         } else {
-          res.json(data.businesses);
+          data = JSON.parse(data);
+          data = JSON.stringify(data.businesses);
+          res.json([data]);
         }
       } else {
-        res.json(data.businesses);
+        data = JSON.parse(data)
+        data = JSON.stringify(data.businesses);
+        res.json([data]);
       }
   });
   })
   .catch((err) => console.log(err))
 })
-
-
 
 module.exports = {
   router,
