@@ -15,6 +15,9 @@ const userSchema = new Schema({
   itineraryByCity: [
     {
       name: String,
+      location: String,
+      latitude: Number,
+      longitude: Number,
       itineraryList: []
     }
   ]
