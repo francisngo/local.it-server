@@ -207,7 +207,6 @@ router.post('/api/yelp', (req, res) => {
   let pythonParse = function() {
     PythonShell.run('knnfilter.py', function (err, results) {
       if (err) throw err;
-      console.log('python parsed')
       res.json(results);
     });
   }

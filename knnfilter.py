@@ -128,6 +128,9 @@ def returnPredicted(data, user):
     for i in range(len(filtered)):
       if filtered[i] == 1:
         filterData.append(origindata['businesses'][i])
+    for i in range(len(filtered)):
+      if filtered[i] == 0:
+        filterData.append(origindata['businesses'][i])
     filterData = json.dumps(filterData)
     print(filterData)
     return filterData
