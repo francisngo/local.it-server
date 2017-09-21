@@ -17,39 +17,39 @@ with open('User.json') as userjson:
     usdata = json.load(userjson)
 
 def restructure(data, catlist, edit=False):
-    for i in range(len(data)):
-        newdata = []
-        for j in range (len(data[i]['categories'])):
-            #print(data[i]['categories'][j])
-            x = data[i]['categories'][j]['alias']
-            if not x in catlist:
-                if edit == True:
-                    catlist.append(x)
-            newdata.append(x)
-        #data[i]['categories'] = newdata
-        for k in range (len(newdata)):
-            if not newdata[k] in data[i]:
-                data[i][newdata[k]] = 1
-    for i in range(len(data)):
-        for j in range(len(catlist)):
-            if not catlist[j] in data[i]:
-                data[i][catlist[j]] = 0
+    # for i in range(len(data)):
+    #     newdata = []
+    #     for j in range (len(data[i]['categories'])):
+    #         #print(data[i]['categories'][j])
+    #         x = data[i]['categories'][j]['alias']
+    #         if not x in catlist:
+    #             if edit == True:
+    #                 catlist.append(x)
+    #         newdata.append(x)
+    #     #data[i]['categories'] = newdata
+    #     for k in range (len(newdata)):
+    #         if not newdata[k] in data[i]:
+    #             data[i][newdata[k]] = 1
+    # for i in range(len(data)):
+    #     for j in range(len(catlist)):
+    #         if not catlist[j] in data[i]:
+    #             data[i][catlist[j]] = 0
     for i in range(len(data)):
         if 'price' in data[i]:
             data[i]['price'] = len(data[i]['price'])
         else:
             data[i]['price'] = 0
-    for i in range(len(data)):
-        data[i]['transaction: pickup'] = 0
-        data[i]['transaction: delivery'] = 0
-        data[i]['transaction: restaurant_reservation'] = 0
-        for j in range(len(data[i]['transactions'])):
-            if data[i]['transactions'][j] == 'pickup':
-                data[i]['transaction: pickup'] = 1
-            if data[i]['transactions'][j] == 'delivery':
-                data[i]['transaction: delivery'] = 1
-            if data[i]['transactions'][j] == 'restaurant_reservation':
-                data[i]['transaction: restaurant_reservation'] = 1
+    # for i in range(len(data)):
+    #     data[i]['transaction: pickup'] = 0
+    #     data[i]['transaction: delivery'] = 0
+    #     data[i]['transaction: restaurant_reservation'] = 0
+    #     for j in range(len(data[i]['transactions'])):
+    #         if data[i]['transactions'][j] == 'pickup':
+    #             data[i]['transaction: pickup'] = 1
+    #         if data[i]['transactions'][j] == 'delivery':
+    #             data[i]['transaction: delivery'] = 1
+    #         if data[i]['transactions'][j] == 'restaurant_reservation':
+    #             data[i]['transaction: restaurant_reservation'] = 1
     return data
 
 def makePrediciton(yelpData, user):

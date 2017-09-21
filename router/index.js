@@ -152,9 +152,6 @@ router.put('/api/interests/:user', (req, res) => {
 });
 
 //Handle Yelp data retreival and Python parsing
-
-
-
 router.post('/api/yelp', (req, res) => {
   console.log('props: ', req.body);
   var credentials = {
@@ -173,37 +170,61 @@ router.post('/api/yelp', (req, res) => {
     location: latlng,
     limit: '15',
   };
-  console.log('params: ', params);
-  yelp.search(params)
-  .then((data) => {
-    User.findOne({ fbID: userid }, (err, usercheck) => {
-    if (err) {return console.error(err)}
-    if (usercheck.interestsByCity.length > 0) {
+
+  let asyncUser = function(id) {
+    console.log('in yelp')
+    return new Promise(function(resolve, reject) {
+      User.findOne({ fbID: id }, (err, usercheck) => {
+      if (err) {return reject(err)}
+      if (usercheck.interestsByCity.length > 0) {
         if (usercheck.interestsByCity[0].interests.length > 3 && usercheck.interestsByCity[0].dislikedInterests.length > 3) {
-            fs.writeFile('Yelp.json', data, 'utf8', function() {
-              console.log('writing second json')
-              fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
-                PythonShell.run('knnfilter.py', function (err, results) {
-                  if (err) throw err;
-                  // results is an array consisting of messages collected during execution
-                  res.json(results);
-                });
-              });
-            });
+          fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
+            return resolve(true);
+          });
         } else {
-          data = JSON.parse(data);
-          data = JSON.stringify(data.businesses);
-          res.json([data]);
+          return resolve(false);
         }
       } else {
-        data = JSON.parse(data)
-        data = JSON.stringify(data.businesses);
-        res.json([data]);
+        return resolve(false);
       }
-  });
+    })
+    })
+  }
+
+  let asyncYelp = function(params) {
+    console.log('in user');
+    return new Promise(function(resolve, reject) {
+      yelp.search(params).then((data) => {
+        fs.writeFile('Yelp.json', data, 'utf8', function() {
+          return resolve(data);
+        });
+      })
+    })
+  }
+
+  let pythonParse = function() {
+    PythonShell.run('knnfilter.py', function (err, results) {
+      if (err) throw err;
+      console.log('python parsed')
+      res.json(results);
+    });
+  }
+
+  Promise.all([asyncYelp(params), asyncUser(userid)])
+  .then(values => {
+    console.log('promises taken care of');
+    //console.log('values: ', values[1]);
+    if (values[1] === true) {
+      pythonParse();
+    } else {
+      data = JSON.parse(values[0])
+      data = JSON.stringify(data.businesses);
+      res.json([data]);
+    }
   })
   .catch((err) => console.log(err))
 })
+
 
 module.exports = {
   router,
