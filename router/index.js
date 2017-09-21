@@ -131,19 +131,21 @@ router.put('/api/:user', (req, res) => {
   });
 });
 
-//TODO: create API to save itinerary list
+//save itinerary list
 router.put('/api/interests/:user', (req, res) => {
   console.log('this is the bod', req.body);
   let user = req.params.user;
-  let itineraryName = req.body.itineraryName;
-  let savedInterests = req.body.savedInterests;
-  let savedItinerary = {
-      name: itineraryName,
-      itineraryList: savedInterests
+  let { name, location, latitude, longitude, itineraryList } = req.body;
+  let saveItinerary = {
+      name: name,
+      location: location,
+      latitude: latitude,
+      longitude: longitude,
+      itineraryList: itineraryList
   };
   User.findOne({ fbID: user }, (err, user) => {
     if (err) { return console.error(err) }
-    user.itineraryByCity.push(savedItinerary);
+    user.itineraryByCity.push(saveItinerary);
     user.save((err, thing) => {
       if (err) return console.log(err);
       res.json(thing);
@@ -152,9 +154,6 @@ router.put('/api/interests/:user', (req, res) => {
 });
 
 //Handle Yelp data retreival and Python parsing
-
-
-
 router.post('/api/yelp', (req, res) => {
   console.log('props: ', req.body);
   var credentials = {
