@@ -8,8 +8,6 @@ const db = require('../db');
 const bodyParser = require('body-parser');
 const PythonShell = require('python-shell');
 const fs = require('fs');
-// const YelpApi = require('yelp-api-v3');
-// const yelp = require('yelp-fusion');
 const Promise = require('bluebird');
 
 router.use(bodyParser.json());
