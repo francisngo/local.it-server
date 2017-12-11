@@ -8,7 +8,8 @@ const db = require('../db');
 const bodyParser = require('body-parser');
 const PythonShell = require('python-shell');
 const fs = require('fs');
-const YelpApi = require('yelp-api-v3');
+// const YelpApi = require('yelp-api-v3');
+// const yelp = require('yelp-fusion');
 const Promise = require('bluebird');
 
 router.use(bodyParser.json());
@@ -71,7 +72,7 @@ router.get('/logout', (req, res) => {
 // get a user from DB
 router.get('/api/:user', (req, res) => {
   let user = req.params.user;
-  console.log(user);
+  // console.log(user);
   User.findOne({ fbID: user }, (err, user) => {
     if (err) { return console.error(err) }
     res.json(user);
@@ -82,7 +83,7 @@ router.put('/api/:user', (req, res) => {
   let city = req.body.city;
   let user = req.params.user;
   let business = req.body.business;
-  console.log('user', user);
+  // console.log('user', user);
   User.findOne({ fbID: user }, (err, user) => {
     if (err) return console.error(err);
     if (req.body.liked === 'true') {
@@ -115,7 +116,7 @@ router.put('/api/:user', (req, res) => {
             element.dislikedInterests.push(business);
           }
         });
-        console.log('this should be true, ', cityExists)
+        // console.log('this should be true, ', cityExists);
         if (!cityExists) {
           user.interestsByCity.push({city: city, interests: [], dislikedInterests: business});
         }
@@ -133,7 +134,7 @@ router.put('/api/:user', (req, res) => {
 
 //save itinerary list
 router.put('/api/interests/:user', (req, res) => {
-  console.log('this is the bod', req.body);
+  // console.log('this is the body', req.body);
   let user = req.params.user;
   let { name, location, latitude, longitude, itineraryList } = req.body;
   let saveItinerary = {
@@ -153,78 +154,98 @@ router.put('/api/interests/:user', (req, res) => {
   });
 });
 
-//Handle Yelp data retreival and Python parsing
-router.post('/api/yelp', (req, res) => {
-  console.log('props: ', req.body);
-  var credentials = {
-    app_id: yelpConfig.appId,
-    app_secret: yelpConfig.appSecret
-  };
-  const yelp = new YelpApi(credentials);
-  let lat = req.body.latitude;
-  let lng = req.body.longitude;
-  let latlng = String(lat) + ',' + String(lng);
-  let title = req.body.title;
-  let userdata = null;
-  let userid = req.body.fbID;
-  let params = {
-    term: title,
-    location: latlng,
-    limit: '15',
-  };
-
-  let asyncUser = function(id) {
-    console.log('in yelp')
-    return new Promise(function(resolve, reject) {
-      User.findOne({ fbID: id }, (err, usercheck) => {
-      if (err) {return reject(err)}
-      if (usercheck.interestsByCity.length > 0) {
-        if (usercheck.interestsByCity[0].interests.length > 3 && usercheck.interestsByCity[0].dislikedInterests.length > 3) {
-          fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
-            return resolve(true);
-          });
-        } else {
-          return resolve(false);
-        }
-      } else {
-        return resolve(false);
-      }
-    })
-    })
-  }
-
-  let asyncYelp = function(params) {
-    console.log('in user');
-    return new Promise(function(resolve, reject) {
-      yelp.search(params).then((data) => {
-        fs.writeFile('Yelp.json', data, 'utf8', function() {
-          return resolve(data);
-        });
-      })
-    })
-  }
-
-  let pythonParse = function() {
-    PythonShell.run('knnfilter.py', function (err, results) {
-      if (err) throw err;
-      res.json(results);
-    });
-  }
-
-  Promise.all([asyncYelp(params), asyncUser(userid)])
-  .then(values => {
-    console.log('promises taken care of');
-    //console.log('values: ', values[1]);
-    if (values[1] === true) {
-      pythonParse();
-    } else {
-      data = JSON.parse(values[0])
-      data = JSON.stringify(data.businesses);
-      res.json([data]);
-    }
-  })
-  .catch((err) => console.log(err))
-})
+// //Handle Yelp data retreival and Python parsing
+// router.post('/api/yelp', (req, res) => {
+//   // console.log('props: ', req.body);
+//   // var credentials = {
+//   //   app_id: yelpConfig.appId,
+//   //   app_secret: yelpConfig.appSecret
+//   // };
+//   // const yelp = new YelpApi(credentials);
+//   let lat = req.body.latitude;
+//   let lng = req.body.longitude;
+//   let latlng = String(lat) + ',' + String(lng);
+//   let title = req.body.title;
+//   let userdata = null;
+//   let userid = req.body.fbID;
+//   let params = {
+//     term: title,
+//     location: latlng,
+//     limit: '15',
+//   };
+//
+//   // console.log('params: ', params);
+//   yelp.accessToken(yelpConfig.appId, yelpConfig.appSecret).then(response => {
+//     const client = yelp.client(response.jsonBody.access_token);
+//
+//     client.search({
+//       term: title,
+//       location: latlng,
+//       limit: '15'
+//     }).then(response => {
+//       console.log(response);
+//     });
+//   })
+//   .catch(e => {
+//   console.log(e);
+//
+//   });
+//
+//   let asyncUser = function(id) {
+//     // console.log('in yelp');
+//     return new Promise(function(resolve, reject) {
+//       User.findOne({ fbID: id }, (err, usercheck) => {
+//         if (err) { return reject(err); }
+//         if (usercheck.interestsByCity.length > 0) {
+//           if (usercheck.interestsByCity[0].interests.length > 3 && usercheck.interestsByCity[0].dislikedInterests.length > 3) {
+//             fs.writeFile('User.json', JSON.stringify(usercheck), 'utf8', function() {
+//               return resolve(true);
+//             });
+//           } else {
+//             return resolve(false);
+//           }
+//         } else {
+//           return resolve(false);
+//         }
+//       });
+//     })
+//     .catch((err) => console.log(err));
+//   }
+//
+//   let asyncYelp = function(params) {
+//     // console.log('in user');
+//     return new Promise(function(resolve, reject) {
+//       yelp.search(params).then((data) => {
+//         fs.writeFile('Yelp.json', data, 'utf8', function() {
+//           return resolve(data);
+//         });
+//       });
+//     })
+//     .catch((err) => console.log(err));
+//   }
+//
+//   let pythonParse = function() {
+//     PythonShell.run('knnfilter.py', function (err, results) {
+//       if (err) throw err;
+//       res.json(results);
+//     });
+//   }
+//
+//   Promise.all([asyncYelp(params), asyncUser(userid)])
+//   .then(values => {
+//     // console.log('promises taken care of');
+//     // console.log('values: ', values[1]);
+//     if (values[1] === true) {
+//       pythonParse();
+//     } else {
+//       data = JSON.parse(values[0])
+//       data = JSON.stringify(data.businesses);
+//       res.json([data]);
+//     }
+//   })
+//   .catch((err) => console.log(err));
+//
+// });
 
 
 module.exports = {
