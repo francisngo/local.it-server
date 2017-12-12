@@ -72,12 +72,13 @@ router.get('/api/:user', (req, res) => {
   let user = req.params.user;
   // console.log(user);
   User.findOne({ fbID: user }, (err, user) => {
+    console.log('user from server: ', user);
     if (err) { return console.error(err) }
     res.json(user);
   });
 });
 
-router.put('/api/:user', (req, res) => {
+router.put('/api/discover/:user', (req, res) => {
   let city = req.body.city;
   let user = req.params.user;
   let business = req.body.business;
@@ -87,7 +88,6 @@ router.put('/api/:user', (req, res) => {
     if (req.body.liked === 'true') {
       // iterate through each city
       if (user.interestsByCity.length > 0) {
-
         var cityExists = false;
         user.interestsByCity.forEach((element) => {
           // if city equals city
@@ -103,7 +103,8 @@ router.put('/api/:user', (req, res) => {
       } else {
         user.interestsByCity.push({city: city, interests: business, dislikedInterests: []});
       }
-    } else {
+    }
+    else {
       if (user.interestsByCity.length > 0) {
         var cityExists = false;
         user.interestsByCity.forEach((element) => {
