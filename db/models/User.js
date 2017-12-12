@@ -21,7 +21,11 @@ const userSchema = new Schema({
       itineraryList: []
     }
   ]
-}, { retainKeyOrder: true });
+},
+{
+  retainKeyOrder: true,
+  usePushEach: true
+});
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
