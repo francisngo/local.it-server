@@ -2,6 +2,8 @@
 
 > Local.it is a mobile based application that recommends activities and businesses one at a time for a user to get excited about and track their likes/dislikes to send more informed suggestions.
 
+![localit](https://i.imgur.com/YOWhKr2.gif)
+
 ## Team
 
   - __Product Owner__: Francis Ngo
