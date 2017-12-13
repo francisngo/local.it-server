@@ -2,7 +2,7 @@
 
 > Local.it is a mobile based application that recommends activities and businesses one at a time for a user to get excited about and track their likes/dislikes to send more informed suggestions.
 
-![localit](https://i.imgur.com/YOWhKr2.gif)
+![local-it](https://user-images.githubusercontent.com/11182826/33928843-2b9fd928-df9c-11e7-9620-7443f27ed58c.gif)
 
 ## Team
 
